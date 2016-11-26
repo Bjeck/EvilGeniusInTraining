@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Room : MonoBehaviour {
 
-	List<Puzzle> puzzles = new List<Puzzle>();
+	public List<Puzzle> puzzles = new List<Puzzle>();
 	public List<roomSpecs> roomSpecifications = new List<roomSpecs>();
 
 	public roomType type;

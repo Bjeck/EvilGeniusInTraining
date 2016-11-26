@@ -23,7 +23,7 @@ public class House : MonoBehaviour {
 		}
 
 		for (int i = 0; i < roomsToRemove.Count; i++) {
-			InstructionManager.Instance.RemoveRoom(roomsToRemove[i]);
+			InstructionManager.Instance.RemoveRoomFromHouse(roomsToRemove[i]);
 		}
 
 		List<Room> roomsToAdd = new List<Room>();
@@ -33,7 +33,7 @@ public class House : MonoBehaviour {
 					continue;
 				}
 				print(r.type+" now adding");
-				roomsToAdd.Add(InstructionManager.Instance.SpawnRoom(r.type,transform));
+				roomsToAdd.Add(InstructionManager.Instance.SpawnRoomOnHouse(r.type,transform));
 			}
 
 			rooms.AddRange(roomsToAdd);
@@ -43,7 +43,7 @@ public class House : MonoBehaviour {
 		}
 		else{
 			foreach(Room r in newRooms){
-				rooms.Add(InstructionManager.Instance.SpawnRoom(r.type,transform));
+				rooms.Add(InstructionManager.Instance.SpawnRoomOnHouse(r.type,transform));
 			}
 		}
 	}

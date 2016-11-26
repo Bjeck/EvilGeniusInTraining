@@ -8,7 +8,8 @@ public class InstructionManager : Singleton<InstructionManager> {
 	protected InstructionManager() { }
 
 	[SerializeField] GameObject roomPrefab;
-
+	[SerializeField] GameObject puzzleButtonPrefab;
+	[SerializeField] Transform puzzleButtonParent;
 	[SerializeField] GameObject roomParent;
 
 	//List of Panels (For recall, if user wants to edit something further.)
@@ -16,7 +17,7 @@ public class InstructionManager : Singleton<InstructionManager> {
 
 	[SerializeField] PuzzleToRoom puzzleToRoom;
 
-	Puzzle selectedPuzzle;
+	public Puzzle selectedPuzzle;
 
 	// Use this for initialization
 	void Start () {
@@ -37,14 +38,14 @@ public class InstructionManager : Singleton<InstructionManager> {
 		print("rooms assigned "+PuzzleManager.Instance.house.rooms.Count);
 	}
 
-	public Room SpawnRoom(roomType typ, Transform parent){
+	public Room SpawnRoomOnHouse(roomType typ, Transform parent){
 		GameObject nr = (GameObject)Instantiate(roomPrefab,parent);
 		Room room = nr.GetComponent<Room>();
 		room.type = typ;
 		return room;
 	}
 
-	public void RemoveRoom(Room r){
+	public void RemoveRoomFromHouse(Room r){
 		PuzzleManager.Instance.house.rooms.Remove(r);
 		Destroy(r.gameObject);
 	}
@@ -53,34 +54,29 @@ public class InstructionManager : Singleton<InstructionManager> {
 		Puzzle puz = b.GetComponent<Puzzle>();
 		selectedPuzzle = puz;
 		AccessPanel(5);
-		print("Puzzle "+puz.name+" handling");
+		print("Puzzle "+puz.puzzleName+" handling");
 		//fill in stuff in panel based on puzzle.
 		puzzleToRoom.FillInRooms();
 		
 	}
 
+	public void FillInPuzzles(){
+		foreach (Puzzle p in PuzzleManager.Instance.allPuzzles) {
+			GameObject g = (GameObject)Instantiate(puzzleButtonPrefab);
+			g.transform.SetParent(puzzleButtonParent,false);
+			Text[] texts = g.GetComponentsInChildren<Text>();
+			texts[0].text = p.puzzleName.ToString();
+			Puzzle pp = g.GetComponent<Puzzle> ();
+			pp.requirements = p.requirements;
+			pp.puzzleName = p.puzzleName;
+			print (p.puzzleName+" " + p.requirements.Count);
 
-	public void TryAssignPuzzleToRoom(Room r){
-		List<roomSpecs> failedReqs = new List<roomSpecs>();
-		foreach(roomSpecs s in selectedPuzzle.requirements){
-			if(r.roomSpecifications.Exists(x=>x==s)){
-				//all good!
-			}
-			else{
-				failedReqs.Add(s);
-			}
+			Button b = g.GetComponent<Button> ();
+			b.onClick.AddListener(()=> { HandlePuzzleSelection(b); } );
 		}
-
-		if(failedReqs.Count > 0){
-			puzzleToRoom.SpawnPuzzleDoesNotFitWarning(failedReqs, r);
-		}
-		else {
-			//if we get here, we assume that the puzzle fits the room.
-			r.AddPuzzle(selectedPuzzle);
-		}
-
-
 	}
+
+
 
 
 
@@ -99,6 +95,9 @@ public class InstructionManager : Singleton<InstructionManager> {
 			}
 		}
 	}
-
+		
+	public void DestroyGameObject(GameObject objToDest){
+		Destroy (objToDest);
+	}
 
 }

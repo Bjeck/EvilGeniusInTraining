@@ -7,11 +7,12 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 
 	public House house;
 
-	List<Puzzle> allPuzzles = new List<Puzzle>();
+	public List<Puzzle> allPuzzles = new List<Puzzle>();
 	List<Puzzle> gamePuzzles = new List<Puzzle>();
 
 	Evil_Genius teamEvil;
 	Agents teamAgent;
+	[SerializeField] PuzzleInstantiator puzzleInstantiator;
 
 	Puzzle curPuzzle;
 
@@ -20,7 +21,7 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 
 	// Use this for initialization
 	void Start () {
-	
+		allPuzzles = puzzleInstantiator.CreatePuzzles ();
 	}
 	
 	// Update is called once per frame

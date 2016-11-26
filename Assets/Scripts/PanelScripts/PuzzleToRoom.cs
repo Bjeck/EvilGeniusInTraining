@@ -13,17 +13,50 @@ public class PuzzleToRoom : MonoBehaviour {
 
 
 	public void FillInRooms(){
-		foreach(Room r in PuzzleManager.Instance.house.rooms){
+
+		foreach (Room r in PuzzleManager.Instance.house.rooms) {
 			GameObject g = (GameObject)Instantiate(roomButtonPrefab);
 			g.transform.SetParent(roomParent,false);
 			Text[] texts = g.GetComponentsInChildren<Text>();
 			texts[0].text = r.type.ToString();
-//			texts[1] = REQUIREMENTS
 
-			g.GetComponent<RoomToPuzzleButton>().roomIAm = r;
+			//			texts[1] = REQUIREMENTS
+
+			Room room = r;
+			g.GetComponent<Button> ().onClick.AddListener(()=> { TryAssignPuzzleToRoom(room); } );
+			
 		}
 
+		print (PuzzleManager.Instance.house.rooms[0]+" ROOM ");
+
 	}
+
+	public void TryAssignPuzzleToRoom(Room r){
+		print ("Try Assigning to "+r.type.ToString());
+		List<roomSpecs> failedReqs = new List<roomSpecs>();
+		foreach(roomSpecs s in InstructionManager.Instance.selectedPuzzle.requirements){
+			if(r.roomSpecifications.Exists(x=>x==s)){
+				//all good!
+			}
+			else{
+				failedReqs.Add(s);
+			}
+		}
+
+		if(failedReqs.Count > 0){
+			print ("failed reqs ");
+			SpawnPuzzleDoesNotFitWarning(failedReqs, r);
+		}
+		else {
+			//if we get here, we assume that the puzzle fits the room.
+			print ("sucess ");
+			r.AddPuzzle(InstructionManager.Instance.selectedPuzzle);
+			InstructionManager.Instance.AccessPanel (4);
+		}
+
+
+	}
+
 
 
 	public void SpawnPuzzleDoesNotFitWarning(List<roomSpecs> failedreqs, Room r){
@@ -36,15 +69,17 @@ public class PuzzleToRoom : MonoBehaviour {
 		}
 
 		g.GetComponentInChildren<Text>().text = failedString;
-		g.GetComponent<PuzzleDoesNotFitRoomWarning>().room = r;
-		g.GetComponent<PuzzleDoesNotFitRoomWarning>().failedSpecs = failedreqs; // This is dumb and slow. Look below for a better solution.
 
+		Button[] buttons = g.GetComponentsInChildren<Button> ();
+		Room rinHouse = PuzzleManager.Instance.house.rooms.Find (x => x == r);
+		buttons[0].onClick.AddListener(()=> { print("BUTTON PRESSED"); rinHouse.roomSpecifications.AddRange(failedreqs); TryAssignPuzzleToRoom(rinHouse); InstructionManager.Instance.DestroyGameObject(g); } );
+		buttons[1].onClick.AddListener(()=> { InstructionManager.Instance.DestroyGameObject(g); } ); //that saved a whole script! Wooh!
 
 	}
 
 }
 
 
-
-//I might be able to do the puzzle script hting with EventSystems. instead. Or Listeners! Like I did in Wizard. That'd make way more sense, right? Than making customs scripts for each.
-//Yes. Yes it would. Hmm. will research when I come home.
+//Now i need to create the dynamic puzzle list
+//to avoid readding puzzles
+//so we only show the puzzles that aren't assigned to a room etc.
