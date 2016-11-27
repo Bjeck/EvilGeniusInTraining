@@ -8,10 +8,12 @@ public class Puzzle : MonoBehaviour {
 	public Mentor mentor;
 	public List<roomSpecs> requirements = new List<roomSpecs>();
 
-	string solution;
-	string outputclue;
+	public string solution;
+	public string outputclue;
+	public float timeToComplete = 10f;
 
 	List<string> hints = new List<string>(); //TBD
+	public bool hasRun = false;
 
 
 

@@ -10,7 +10,10 @@ public class InstructionManager : Singleton<InstructionManager> {
 	[SerializeField] GameObject roomPrefab;
 	[SerializeField] GameObject puzzleButtonPrefab;
 	[SerializeField] Transform puzzleButtonParent;
+	[SerializeField] Transform puzzleChainParent;
 	[SerializeField] GameObject roomParent;
+	[SerializeField] GameObject gamePanel;
+	[SerializeField] GameObject instructionPanel;
 
 	//List of Panels (For recall, if user wants to edit something further.)
 	public List<GameObject> panels = new List<GameObject>();
@@ -52,12 +55,11 @@ public class InstructionManager : Singleton<InstructionManager> {
 
 	public void HandlePuzzleSelection(Button b){
 		Puzzle puz = b.GetComponent<Puzzle>();
-		selectedPuzzle = puz;
+		selectedPuzzle = PuzzleManager.Instance.allPuzzles.Find(x=>x.puzzleName==puz.puzzleName);
 		AccessPanel(5);
 		print("Puzzle "+puz.puzzleName+" handling");
 		//fill in stuff in panel based on puzzle.
 		puzzleToRoom.FillInRooms();
-		
 	}
 
 	public void FillInPuzzles(){
@@ -69,16 +71,36 @@ public class InstructionManager : Singleton<InstructionManager> {
 			Puzzle pp = g.GetComponent<Puzzle> ();
 			pp.requirements = p.requirements;
 			pp.puzzleName = p.puzzleName;
-			print (p.puzzleName+" " + p.requirements.Count);
+//			print (p.puzzleName+" " + p.requirements.Count);
 
 			Button b = g.GetComponent<Button> ();
 			b.onClick.AddListener(()=> { HandlePuzzleSelection(b); } );
 		}
 	}
 
+	public void FillInPuzzleChain(){
+		foreach (Puzzle p in PuzzleManager.Instance.gamePuzzles) {
+			GameObject g = (GameObject)Instantiate(puzzleButtonPrefab);
+			g.transform.SetParent(puzzleChainParent,false);
+			Text[] texts = g.GetComponentsInChildren<Text>();
+			texts[0].text = p.puzzleName.ToString();
+			Puzzle pp = g.GetComponent<Puzzle> ();
+			pp.requirements = p.requirements;
+			pp.puzzleName = p.puzzleName;
+
+		//	Button b = g.GetComponent<Button> ();
+			//b.onClick.AddListener(()=> { HandlePuzzleSelection(b); } );
+		}
+	}
 
 
 
+	public void StartGame(){
+		gamePanel.SetActive (true);
+		instructionPanel.SetActive (false);
+
+		PuzzleManager.Instance.BeginGame ();
+	}
 
 	public void AccessPanelFromButton(GameObject panelToAccess){
 		AccessPanel(panels.IndexOf(panelToAccess));

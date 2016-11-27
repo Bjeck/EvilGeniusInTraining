@@ -49,9 +49,11 @@ public class PuzzleToRoom : MonoBehaviour {
 		}
 		else {
 			//if we get here, we assume that the puzzle fits the room.
-			print ("sucess ");
-			r.AddPuzzle(InstructionManager.Instance.selectedPuzzle);
+			r.AddPuzzle(InstructionManager.Instance.selectedPuzzle); //THIS IS ALSO WRONG THEN
+			PuzzleManager.Instance.AddPuzzleToGame (InstructionManager.Instance.selectedPuzzle);
 			InstructionManager.Instance.AccessPanel (4);
+			InstructionManager.Instance.selectedPuzzle = null;
+			print ("sucess. added puzzle to room.");
 		}
 
 
