@@ -9,13 +9,18 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	public bool DebugGame = false;
 
 	public House house;
-
+	public List<Room> allRooms = new List<Room> ();
 	public List<Puzzle> allPuzzles = new List<Puzzle>();
 	public List<Puzzle> gamePuzzles = new List<Puzzle>();
 
-	[SerializeField] Evil_Genius teamEvil;
-	[SerializeField] Agents teamAgent;
+	public List<Mentor> allMentors = new List<Mentor> ();
+	public Mentor selectedMentor;
+
+	public Evil_Genius teamEvil;
+	public Agents teamAgent;
 	[SerializeField] PuzzleInstantiator puzzleInstantiator;
+	[SerializeField] RoomInstantiator roomInstantiator;
+	[SerializeField] MentorInstantiator mentorInstantiator;
 
 	Puzzle curPuzzle;
 	public bool isPuzzleRunning = false;
@@ -23,6 +28,8 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	[SerializeField] InputField solutionIPF;
 	[SerializeField] Text timerUI;
 	[SerializeField] Text outputText;
+	[SerializeField] Text curPuzzleText;
+
 	float timer;
 
 	int puzzleIterator = 0;
@@ -30,7 +37,9 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 
 	// Use this for initialization
 	void Start () {
+		allMentors = mentorInstantiator.CreateMentors ();
 		allPuzzles = puzzleInstantiator.CreatePuzzles ();
+		allRooms = roomInstantiator.CreateRooms ();
 
 		if (DebugGame) {
 			DebugGameStart ();
@@ -53,9 +62,19 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	}
 
 
+	public void StartNextPuzzleInIteration(){
+		puzzleIterator += 1;
+		if (gamePuzzles.Count > puzzleIterator) {
+			StartPuzzle (gamePuzzles [puzzleIterator]);
+		} else {
+			print ("NO MORE PUZZLES!");
+		}
+	}
+
 	public void StartPuzzle(Puzzle p){
 		if (gamePuzzles.Exists (x => x == p) && !p.hasRun) {
 			curPuzzle = p;
+			curPuzzleText.text = curPuzzle.puzzleName;
 			timer = p.timeToComplete;
 			isPuzzleRunning = true;
 		}
@@ -88,18 +107,10 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 		//timerUI.text = "";
 
 		//start next puzzle?
-
-		puzzleIterator += 1;
-		if (gamePuzzles.Count > puzzleIterator) {
-			StartPuzzle (gamePuzzles [puzzleIterator]);
-		} else {
-			print ("NO MORE PUZZLES!");
-		}
-
 	}
 
 
-	public void AddPuzzleToGame(Puzzle p){
+	public void AddPuzzleToGame(Puzzle p, Room r){
 		print ("ADDING PUZZLE TO GAME " + p.puzzleName);
 		gamePuzzles.Add (p);
 	}

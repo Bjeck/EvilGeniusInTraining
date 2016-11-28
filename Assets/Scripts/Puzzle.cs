@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Puzzle : MonoBehaviour {
 
 	public string puzzleName = "";
-	public Mentor mentor;
+	public MentorID mentor;
 	public List<roomSpecs> requirements = new List<roomSpecs>();
 
 	public string solution;

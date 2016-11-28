@@ -50,7 +50,7 @@ public class PuzzleToRoom : MonoBehaviour {
 		else {
 			//if we get here, we assume that the puzzle fits the room.
 			r.AddPuzzle(InstructionManager.Instance.selectedPuzzle); //THIS IS ALSO WRONG THEN
-			PuzzleManager.Instance.AddPuzzleToGame (InstructionManager.Instance.selectedPuzzle);
+			PuzzleManager.Instance.AddPuzzleToGame (InstructionManager.Instance.selectedPuzzle, r);
 			InstructionManager.Instance.AccessPanel (4);
 			InstructionManager.Instance.selectedPuzzle = null;
 			print ("sucess. added puzzle to room.");
@@ -74,7 +74,7 @@ public class PuzzleToRoom : MonoBehaviour {
 
 		Button[] buttons = g.GetComponentsInChildren<Button> ();
 		Room rinHouse = PuzzleManager.Instance.house.rooms.Find (x => x == r);
-		buttons[0].onClick.AddListener(()=> { print("BUTTON PRESSED"); rinHouse.roomSpecifications.AddRange(failedreqs); TryAssignPuzzleToRoom(rinHouse); InstructionManager.Instance.DestroyGameObject(g); } );
+		buttons[0].onClick.AddListener(()=> { rinHouse.roomSpecifications.AddRange(failedreqs); TryAssignPuzzleToRoom(rinHouse); InstructionManager.Instance.DestroyGameObject(g); } );
 		buttons[1].onClick.AddListener(()=> { InstructionManager.Instance.DestroyGameObject(g); } ); //that saved a whole script! Wooh!
 
 	}

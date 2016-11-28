@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
+
 public class Mentor : MonoBehaviour {
 
-	string mentorName;
+	public string mentorName;
+	public MentorID ID;
+	public string description;
 
 }

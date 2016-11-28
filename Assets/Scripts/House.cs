@@ -23,7 +23,7 @@ public class House : MonoBehaviour {
 		}
 
 		for (int i = 0; i < roomsToRemove.Count; i++) {
-			InstructionManager.Instance.RemoveRoomFromHouse(roomsToRemove[i]);
+			rooms.Remove(roomsToRemove[i]);
 		}
 
 		List<Room> roomsToAdd = new List<Room>();
@@ -33,7 +33,12 @@ public class House : MonoBehaviour {
 					continue;
 				}
 				print(r.type+" now adding");
-				roomsToAdd.Add(InstructionManager.Instance.SpawnRoomOnHouse(r.type,transform));
+
+				Room room = r;
+				//room.type = r.type;
+				//room.roomSpecifications = r.roomSpecifications;
+
+				roomsToAdd.Add(room);
 			}
 
 			rooms.AddRange(roomsToAdd);
@@ -43,10 +48,13 @@ public class House : MonoBehaviour {
 		}
 		else{
 			foreach(Room r in newRooms){
-				rooms.Add(InstructionManager.Instance.SpawnRoomOnHouse(r.type,transform));
+				Room room = r;
+				rooms.Add(room);
 			}
 		}
 	}
 
 
 }
+
+//probably stop spawning the rooms now? Just add them to the list instead. 

@@ -11,9 +11,15 @@ public class InstructionManager : Singleton<InstructionManager> {
 	[SerializeField] GameObject puzzleButtonPrefab;
 	[SerializeField] Transform puzzleButtonParent;
 	[SerializeField] Transform puzzleChainParent;
-	[SerializeField] GameObject roomParent;
 	[SerializeField] GameObject gamePanel;
 	[SerializeField] GameObject instructionPanel;
+	[SerializeField] GameObject roomTogglePrefab;
+	[SerializeField] Transform roomParent;
+	[SerializeField] GameObject mentorButtonPrefab;
+	[SerializeField] Transform mentorParent;
+	[SerializeField] Button mentorProgressButton;
+	[SerializeField] Text mentorInfo;
+	[SerializeField] GameObject mentorIconPrefab;
 
 	//List of Panels (For recall, if user wants to edit something further.)
 	public List<GameObject> panels = new List<GameObject>();
@@ -22,10 +28,6 @@ public class InstructionManager : Singleton<InstructionManager> {
 
 	public Puzzle selectedPuzzle;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
 
 	public void AssignRooms(){
 		List<Room> rooms = roomParent.GetComponentsInChildren<Room>().ToList();
@@ -33,24 +35,12 @@ public class InstructionManager : Singleton<InstructionManager> {
 
 		foreach(Room r in rooms){
 			if(r.GetComponentInChildren<Toggle>().isOn){
-				roomsInHouse.Add(r);
+				roomsInHouse.Add(PuzzleManager.Instance.allRooms.Find(x=>x.type==r.type));
 			}
 		}
 
 		PuzzleManager.Instance.house.SetRooms(roomsInHouse);
 		print("rooms assigned "+PuzzleManager.Instance.house.rooms.Count);
-	}
-
-	public Room SpawnRoomOnHouse(roomType typ, Transform parent){
-		GameObject nr = (GameObject)Instantiate(roomPrefab,parent);
-		Room room = nr.GetComponent<Room>();
-		room.type = typ;
-		return room;
-	}
-
-	public void RemoveRoomFromHouse(Room r){
-		PuzzleManager.Instance.house.rooms.Remove(r);
-		Destroy(r.gameObject);
 	}
 
 	public void HandlePuzzleSelection(Button b){
@@ -60,6 +50,39 @@ public class InstructionManager : Singleton<InstructionManager> {
 		print("Puzzle "+puz.puzzleName+" handling");
 		//fill in stuff in panel based on puzzle.
 		puzzleToRoom.FillInRooms();
+	}
+
+	public void FillInMentors(){
+		foreach (Mentor m in PuzzleManager.Instance.allMentors) {
+			GameObject g = (GameObject)Instantiate(mentorButtonPrefab);
+			g.transform.SetParent(mentorParent,false);
+			Text text = g.GetComponentInChildren<Text>();
+			g.GetComponent<Mentor> ().mentorName = m.mentorName;
+			text.text = m.mentorName;
+
+			Mentor mentor = m;
+			g.GetComponent<Button> ().onClick.AddListener(()=> { SelectMentor(mentor); } );
+		}
+	}
+
+	public void SelectMentor(Mentor m){
+		PuzzleManager.Instance.selectedMentor = PuzzleManager.Instance.allMentors.Find (x => x.mentorName == m.mentorName);
+		mentorInfo.text = m.mentorName+"\n\n"+m.description;
+		mentorProgressButton.interactable = true;
+	}
+
+	public void FillInRooms(){
+		print ("FILLING IN ROOMS");
+		foreach (Room r in PuzzleManager.Instance.allRooms) {
+			
+			GameObject g = (GameObject)Instantiate(roomTogglePrefab);
+			g.transform.SetParent(roomParent,false);
+			Text text = g.GetComponentInChildren<Text>();
+			g.GetComponent<Room> ().type = r.type;
+			text.text = r.type.ToString();
+			print ("many times "+g.name);
+		}
+
 	}
 
 	public void FillInPuzzles(){
@@ -75,6 +98,13 @@ public class InstructionManager : Singleton<InstructionManager> {
 
 			Button b = g.GetComponent<Button> ();
 			b.onClick.AddListener(()=> { HandlePuzzleSelection(b); } );
+
+
+			if (p.mentor == PuzzleManager.Instance.selectedMentor.ID) {
+				GameObject icon = (GameObject)Instantiate(mentorIconPrefab);
+				icon.transform.SetParent(g.transform,false);
+				icon.GetComponent<RectTransform> ().position = (g.GetComponent<RectTransform> ().position + new Vector3(g.GetComponent<RectTransform>().localScale.x/2,0,0));
+			}
 		}
 	}
 
@@ -87,9 +117,6 @@ public class InstructionManager : Singleton<InstructionManager> {
 			Puzzle pp = g.GetComponent<Puzzle> ();
 			pp.requirements = p.requirements;
 			pp.puzzleName = p.puzzleName;
-
-		//	Button b = g.GetComponent<Button> ();
-			//b.onClick.AddListener(()=> { HandlePuzzleSelection(b); } );
 		}
 	}
 
