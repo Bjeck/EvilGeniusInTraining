@@ -24,13 +24,17 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 
 	Puzzle curPuzzle;
 	public bool isPuzzleRunning = false;
+	public bool runsOnLives = false;
 
 	[SerializeField] InputField solutionIPF;
 	[SerializeField] Text timerUI;
 	[SerializeField] Text outputText;
 	[SerializeField] Text curPuzzleText;
+	[SerializeField] Text livesCounter;
 
-	float timer;
+	[SerializeField] GameObject hintPanel; [SerializeField] Text hintPanelText;
+
+	public float timer;
 
 	int puzzleIterator = 0;
 
@@ -76,6 +80,11 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 			curPuzzle = p;
 			curPuzzleText.text = curPuzzle.puzzleName;
 			timer = p.timeToComplete;
+			if (p.lives > 0) {
+				livesCounter.gameObject.SetActive (true);
+				UpdateLivesText (0);
+				runsOnLives = true;
+			}
 			isPuzzleRunning = true;
 		}
 	}
@@ -85,16 +94,22 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 			ExecuteSolution ();
 		} else {
 			print ("Wrong solution :(");
+			if (runsOnLives) {
+				UpdateLivesText (-1);
+				if(curPuzzle.lives <= 0){
+					timer = 0;
+					ExecuteSolution ();
+				}
+			}
 		}
 	}
 
 	void ExecuteSolution(){
 
-		print ("CORRECT!");
 		//give points
 		if (timer > 0) {
 			teamAgent.points += 1;
-		} else if (timer < 0) {
+		} else if (timer <= 0) {
 			teamEvil.points += 1;
 		}
 
@@ -104,6 +119,7 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 		isPuzzleRunning = false;
 		curPuzzle = null;
 		timer = 0;
+		livesCounter.gameObject.SetActive (false);
 		//timerUI.text = "";
 
 		//start next puzzle?
@@ -116,9 +132,41 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	}
 
 
+	public void AddHelpTokenAgent(){
+		teamAgent.tokens += 1;
+	}
 
+	public void AgentHelp(){
+		if (teamAgent.tokens > 0) {
+			DisplayHint (curPuzzle.agenthelp);
+			curPuzzle.onHelpAgent (curPuzzle);
+			teamAgent.tokens -= 1;
+		}
+	}
 
+	public void EvilHelp(){
+		if (teamEvil.tokens > 0) {
+			DisplayHint (curPuzzle.evilhelp);
+			curPuzzle.onHelpEvil (curPuzzle);
+			teamEvil.tokens -= 1;
+		}
+	}
 
+	public void DisplayHint(string textToDisp){
+		if (hintPanel == null) {
+			hintPanelText = hintPanel.GetComponentInChildren<Text> ();
+			print ("set hintpaneltext");
+		}
+		print (curPuzzle.puzzleName);
+		print (hintPanelText);
+		hintPanelText.text = textToDisp;
+		hintPanel.SetActive (true);
+	}
+
+	public void UpdateLivesText(int livesChange){
+		curPuzzle.lives += livesChange;
+		livesCounter.text = "Lives :" + curPuzzle.lives;
+	}
 
 	public void DebugGameStart(){
 		gamePuzzles = allPuzzles;

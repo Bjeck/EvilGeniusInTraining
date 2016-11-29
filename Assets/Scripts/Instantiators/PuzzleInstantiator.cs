@@ -23,10 +23,13 @@ public class PuzzleInstantiator : MonoBehaviour {
 
 		newPuzzle = (GameObject)Instantiate(puzzlePrefab,puzzleParent);
 		np = newPuzzle.GetComponent<Puzzle> ();
-		np.puzzleName = "CardPuzzle";
+		np.puzzleName = "Card Puzzle";
 		np.requirements.Clear (); np.requirements.Add (roomSpecs.Table);
 		np.solution = "cards";
 		np.outputclue = "This will display another clue!";
+		np.agenthelp = "You may remove 10 cards from the deck.";
+		np.evilhelp = "You may slam the table.";
+		np.onHelpAgent = (p) => { PuzzleManager.Instance.timer += 10; };
 		np.mentor = MentorID.None;
 		possiblePuzzles.Add (np);
 
@@ -35,6 +38,7 @@ public class PuzzleInstantiator : MonoBehaviour {
 		np.puzzleName = "windowCodePuzzle";
 		np.requirements.Clear (); np.requirements.Add (roomSpecs.DoubleSidedWindow);
 		np.mentor = MentorID.None;
+		np.lives = 2;
 		possiblePuzzles.Add (np);
 
 		newPuzzle = (GameObject)Instantiate(puzzlePrefab,puzzleParent);

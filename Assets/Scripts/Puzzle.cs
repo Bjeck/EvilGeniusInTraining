@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class Puzzle : MonoBehaviour {
 
@@ -8,13 +9,20 @@ public class Puzzle : MonoBehaviour {
 	public MentorID mentor;
 	public List<roomSpecs> requirements = new List<roomSpecs>();
 
+	public string agenthelp = "";
+	public string evilhelp = "";
+
 	public string solution;
 	public string outputclue;
 	public float timeToComplete = 10f;
 
-	List<string> hints = new List<string>(); //TBD
 	public bool hasRun = false;
 
+	public int lives = -1; //if -1 = puzzle has no lives system.
+
+
+	public Action<Puzzle> onHelpAgent;
+	public Action<Puzzle> onHelpEvil;
 
 
 

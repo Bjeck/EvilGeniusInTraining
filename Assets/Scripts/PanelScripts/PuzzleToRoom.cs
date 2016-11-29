@@ -10,9 +10,14 @@ public class PuzzleToRoom : MonoBehaviour {
 	[SerializeField] GameObject roomButtonPrefab;
 	[SerializeField] GameObject puzzleDoesNotFitWarningPrefab;
 	[SerializeField] Transform roomParent;
+	[SerializeField] Text puzzleText;
 
 
 	public void FillInRooms(){
+
+		foreach (Transform g in roomParent) { //clearing the list of rooms, in case it was filled already
+			Destroy (g.gameObject);
+		}
 
 		foreach (Room r in PuzzleManager.Instance.house.rooms) {
 			GameObject g = (GameObject)Instantiate(roomButtonPrefab);
@@ -20,11 +25,20 @@ public class PuzzleToRoom : MonoBehaviour {
 			Text[] texts = g.GetComponentsInChildren<Text>();
 			texts[0].text = r.type.ToString();
 
+			texts [1].text = "";
+			foreach(roomSpecs s in r.roomSpecifications){
+				texts[1].text += s.ToString()+", ";
+			}
 			//			texts[1] = REQUIREMENTS
 
 			Room room = r;
 			g.GetComponent<Button> ().onClick.AddListener(()=> { TryAssignPuzzleToRoom(room); } );
 			
+		}
+
+		puzzleText.text = InstructionManager.Instance.selectedPuzzle.puzzleName + "\n\nNeeds: ";
+		foreach (roomSpecs s in InstructionManager.Instance.selectedPuzzle.requirements) {
+			puzzleText.text += s.ToString () + ", ";
 		}
 
 		print (PuzzleManager.Instance.house.rooms[0]+" ROOM ");

@@ -17,9 +17,14 @@ public class GameInfoPanel : MonoBehaviour {
 	}
 
 	public void UpdateText(){
+		
+		s = "Tokens: \n";
+		s += "Evil Genius: " + PuzzleManager.Instance.teamEvil.tokens+"\n";
+		s += "Agents: " + PuzzleManager.Instance.teamAgent.tokens+"\n";
 
-		s = "Evil Genius: " + PuzzleManager.Instance.teamEvil.points+" Points\n";
-		s += "Agents: " + PuzzleManager.Instance.teamAgent.points + " Points\n";
+		s += "\nPoints: "+"\n";
+		s += "Evil Genius: " + PuzzleManager.Instance.teamEvil.points+"\n";
+		s += "Agents: " + PuzzleManager.Instance.teamAgent.points+"\n";
 
 		text.text = s;
 	}
