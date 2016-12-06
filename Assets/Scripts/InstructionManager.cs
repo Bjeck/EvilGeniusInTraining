@@ -20,6 +20,8 @@ public class InstructionManager : Singleton<InstructionManager> {
 	[SerializeField] Button mentorProgressButton;
 	[SerializeField] Text mentorInfo;
 	[SerializeField] GameObject mentorIconPrefab;
+	[SerializeField] Transform puzzleInstructionWindow;
+	[SerializeField] GameObject puzzleInstructionRecap;
 
 	//List of Panels (For recall, if user wants to edit something further.)
 	public List<GameObject> panels = new List<GameObject>();
@@ -27,6 +29,9 @@ public class InstructionManager : Singleton<InstructionManager> {
 	[SerializeField] PuzzleToRoom puzzleToRoom;
 
 	public Puzzle selectedPuzzle;
+
+	int puzzlesInstructed = 0;
+	int panelsShown = 0;
 
 
 	public void AssignRooms(){
@@ -91,9 +96,14 @@ public class InstructionManager : Singleton<InstructionManager> {
 			g.transform.SetParent(puzzleButtonParent,false);
 			Text[] texts = g.GetComponentsInChildren<Text>();
 			texts[0].text = p.puzzleName.ToString();
+			texts[1].text = "Requirements: ";
+			foreach(roomSpecs s in p.requirements){
+				texts[1].text += s.ToString();
+			}
 			Puzzle pp = g.GetComponent<Puzzle> ();
 			pp.requirements = p.requirements;
 			pp.puzzleName = p.puzzleName;
+
 //			print (p.puzzleName+" " + p.requirements.Count);
 
 			Button b = g.GetComponent<Button> ();
@@ -114,11 +124,61 @@ public class InstructionManager : Singleton<InstructionManager> {
 			g.transform.SetParent(puzzleChainParent,false);
 			Text[] texts = g.GetComponentsInChildren<Text>();
 			texts[0].text = p.puzzleName.ToString();
+			texts[1].text = "";
 			Puzzle pp = g.GetComponent<Puzzle> ();
 			pp.requirements = p.requirements;
 			pp.puzzleName = p.puzzleName;
 		}
 	}
+
+	public void StartPuzzleInstructions(){
+		puzzlesInstructed = 0;
+		panelsShown = 0;
+		NextPuzzleInstruction();
+	}
+
+	void NextPuzzleInstruction(){
+		panelsShown = 0;
+		PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].transform.parent.SetParent(puzzleInstructionWindow);
+		foreach(PuzzleInstructionPanel p in PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels){
+			p.gameObject.SetActive(false);
+		}
+		PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].gameObject.SetActive(true);
+		NextInstructionPanel();
+		print("begun instructions");
+	}
+
+	public void NextInstructionPanel(){
+		if(PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels.Count == (panelsShown+1)){
+			
+
+			if(PuzzleManager.Instance.gamePuzzles.Count == (puzzlesInstructed+1)){
+				print("added end instructions listener");
+				//add listener to button to get out of puzzle instructions, as we're now done.
+				PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].GetComponentInChildren<Button>().onClick.AddListener(()=> { PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].transform.parent.SetParent(PuzzleManager.Instance.puzzleInstantiator.puzzleInstructions); EndPuzzleInstruction();} );
+			}
+			else{
+				print("added next PUZZLe listern");
+				//add listener to button to get out of this puzzle
+				//sorry about that line. it's f***ed long.
+				PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].GetComponentInChildren<Button>().onClick.AddListener(()=> { PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].transform.parent.SetParent(PuzzleManager.Instance.puzzleInstantiator.puzzleInstructions); puzzlesInstructed++; NextPuzzleInstruction(); } );
+			}
+		}
+		else {
+			//add listener to proceed to the next one. NextInstructionPanel
+			print("added next panel listern");
+			PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].GetComponentInChildren<Button>().onClick.AddListener(()=> { panelsShown++; NextInstructionPanel(); } );
+		}
+		if(panelsShown > 0){
+			PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown-1].gameObject.SetActive(false);
+		}
+		PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].gameObject.SetActive(true);
+	}
+
+	public void EndPuzzleInstruction(){
+		puzzleInstructionRecap.SetActive(true);
+	}
+
 
 
 

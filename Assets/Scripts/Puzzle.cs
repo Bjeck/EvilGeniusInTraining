@@ -12,14 +12,17 @@ public class Puzzle : MonoBehaviour {
 	public string agenthelp = "";
 	public string evilhelp = "";
 
+	public string instruction = "";
 	public string solution;
-	public string outputclue;
+	public string successclue;
+	public string failureclue;
 	public float timeToComplete = 10f;
 
 	public bool hasRun = false;
 
 	public int lives = -1; //if -1 = puzzle has no lives system.
 
+	public List<PuzzleInstructionPanel> instructionPanels;
 
 	public Action<Puzzle> onHelpAgent;
 	public Action<Puzzle> onHelpEvil;

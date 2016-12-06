@@ -18,7 +18,7 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 
 	public Evil_Genius teamEvil;
 	public Agents teamAgent;
-	[SerializeField] PuzzleInstantiator puzzleInstantiator;
+	public PuzzleInstantiator puzzleInstantiator;
 	[SerializeField] RoomInstantiator roomInstantiator;
 	[SerializeField] MentorInstantiator mentorInstantiator;
 
@@ -35,6 +35,8 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	[SerializeField] GameObject hintPanel; [SerializeField] Text hintPanelText;
 
 	public float timer;
+	[SerializeField] Image timerMeter;
+	[SerializeField] GameObject timerParent;
 
 	int puzzleIterator = 0;
 
@@ -54,8 +56,23 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	void Update () {
 		if (isPuzzleRunning) {
 			timer -= Time.deltaTime;
-			timerUI.text = timer.ToString();
+			timerUI.text = timer.ToString("F2");
+			SetTimerMeter();
+			if(timer < 0 && timerUI.color == Color.white){
+				timerUI.color = Color.red;
+				timerMeter.color = Color.red;
+			}
+			if(timer < (0-curPuzzle.timeToComplete)){
+				//END PUZZLE
+				ExecuteSolution();
+			}
 		}
+	}
+
+	void SetTimerMeter(){
+		Vector3 sc = timerMeter.transform.localScale;
+		sc.x = -timer/curPuzzle.timeToComplete*3;
+		timerMeter.transform.localScale = sc;
 	}
 
 
@@ -78,13 +95,17 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	public void StartPuzzle(Puzzle p){
 		if (gamePuzzles.Exists (x => x == p) && !p.hasRun) {
 			curPuzzle = p;
-			curPuzzleText.text = curPuzzle.puzzleName;
+			curPuzzleText.text = curPuzzle.instruction;
 			timer = p.timeToComplete;
+			timerParent.SetActive(true);
+			timerUI.color = Color.white;
+			timerMeter.color = Color.white;
 			if (p.lives > 0) {
 				livesCounter.gameObject.SetActive (true);
 				UpdateLivesText (0);
 				runsOnLives = true;
 			}
+
 			isPuzzleRunning = true;
 		}
 	}
@@ -96,7 +117,7 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 			print ("Wrong solution :(");
 			if (runsOnLives) {
 				UpdateLivesText (-1);
-				if(curPuzzle.lives <= 0){
+				if(curPuzzle.lives < 0){
 					timer = 0;
 					ExecuteSolution ();
 				}
@@ -106,15 +127,21 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 
 	void ExecuteSolution(){
 
+		timerParent.SetActive(false);
 		//give points
 		if (timer > 0) {
 			teamAgent.points += 1;
+			outputText.text = curPuzzle.successclue;
 		} else if (timer <= 0) {
 			teamEvil.points += 1;
+			if(curPuzzle.lives >= 0){
+				outputText.text = curPuzzle.failureclue;
+			}
+			else {
+				outputText.text = "Only host gets to see this: "+curPuzzle.successclue;
+			}
 		}
 
-		//give output.
-		outputText.text = curPuzzle.outputclue;
 
 		isPuzzleRunning = false;
 		curPuzzle = null;
