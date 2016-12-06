@@ -22,6 +22,7 @@ public class InstructionManager : Singleton<InstructionManager> {
 	[SerializeField] GameObject mentorIconPrefab;
 	[SerializeField] Transform puzzleInstructionWindow;
 	[SerializeField] GameObject puzzleInstructionRecap;
+	[SerializeField] GameObject midPuzzleInstructionRecap;
 
 	//List of Panels (For recall, if user wants to edit something further.)
 	public List<GameObject> panels = new List<GameObject>();
@@ -77,7 +78,7 @@ public class InstructionManager : Singleton<InstructionManager> {
 	}
 
 	public void FillInRooms(){
-		print ("FILLING IN ROOMS");
+	//	print ("FILLING IN ROOMS");
 		foreach (Room r in PuzzleManager.Instance.allRooms) {
 			
 			GameObject g = (GameObject)Instantiate(roomTogglePrefab);
@@ -85,7 +86,7 @@ public class InstructionManager : Singleton<InstructionManager> {
 			Text text = g.GetComponentInChildren<Text>();
 			g.GetComponent<Room> ().type = r.type;
 			text.text = r.type.ToString();
-			print ("many times "+g.name);
+//			print ("many times "+g.name);
 		}
 
 	}
@@ -137,7 +138,8 @@ public class InstructionManager : Singleton<InstructionManager> {
 		NextPuzzleInstruction();
 	}
 
-	void NextPuzzleInstruction(){
+	public void NextPuzzleInstruction(){
+		midPuzzleInstructionRecap.SetActive (false);
 		panelsShown = 0;
 		PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].transform.parent.SetParent(puzzleInstructionWindow);
 		foreach(PuzzleInstructionPanel p in PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels){
@@ -161,7 +163,7 @@ public class InstructionManager : Singleton<InstructionManager> {
 				print("added next PUZZLe listern");
 				//add listener to button to get out of this puzzle
 				//sorry about that line. it's f***ed long.
-				PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].GetComponentInChildren<Button>().onClick.AddListener(()=> { PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].transform.parent.SetParent(PuzzleManager.Instance.puzzleInstantiator.puzzleInstructions); puzzlesInstructed++; NextPuzzleInstruction(); } );
+				PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].GetComponentInChildren<Button>().onClick.AddListener(()=> { PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].transform.parent.SetParent(PuzzleManager.Instance.puzzleInstantiator.puzzleInstructions); puzzlesInstructed++; midPuzzleInstructionRecap.SetActive(true); } );
 			}
 		}
 		else {
@@ -173,6 +175,8 @@ public class InstructionManager : Singleton<InstructionManager> {
 			PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown-1].gameObject.SetActive(false);
 		}
 		PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].gameObject.SetActive(true);
+		//PuzzleManager.Instance.gamePuzzles [puzzlesInstructed].instructionPanels [panelsShown].transform.parent.localScale = Vector3.one;
+		//PuzzleManager.Instance.gamePuzzles [puzzlesInstructed].instructionPanels [panelsShown].transform.parent.position = new Vector3 (Screen.width / 2, Screen.height / 2, 0);
 	}
 
 	public void EndPuzzleInstruction(){
@@ -186,7 +190,7 @@ public class InstructionManager : Singleton<InstructionManager> {
 		gamePanel.SetActive (true);
 		instructionPanel.SetActive (false);
 
-		PuzzleManager.Instance.BeginGame ();
+		PuzzleManager.Instance.InitiateGame ();
 	}
 
 	public void AccessPanelFromButton(GameObject panelToAccess){

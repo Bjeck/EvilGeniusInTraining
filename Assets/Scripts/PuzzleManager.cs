@@ -76,6 +76,12 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	}
 
 
+
+	public void InitiateGame(){
+		
+	}
+
+
 	public void BeginGame(){
 
 		StartPuzzle (gamePuzzles [puzzleIterator]);
@@ -198,7 +204,7 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	public void DebugGameStart(){
 		gamePuzzles = allPuzzles;
 
-		BeginGame ();
+		//BeginGame ();
 	}
 
 	public void SetupTeams(){
