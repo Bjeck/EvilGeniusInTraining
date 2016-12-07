@@ -27,6 +27,8 @@ public class Puzzle : MonoBehaviour {
 	public Action<Puzzle> onHelpAgent;
 	public Action<Puzzle> onHelpEvil;
 
+	public Action<Puzzle> onPlay;
+
 
 
 	//function that finds instructionmanager for onclick

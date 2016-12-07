@@ -49,15 +49,6 @@ public class InstructionManager : Singleton<InstructionManager> {
 		print("rooms assigned "+PuzzleManager.Instance.house.rooms.Count);
 	}
 
-	public void HandlePuzzleSelection(Button b){
-		Puzzle puz = b.GetComponent<Puzzle>();
-		selectedPuzzle = PuzzleManager.Instance.allPuzzles.Find(x=>x.puzzleName==puz.puzzleName);
-		AccessPanel(5);
-		print("Puzzle "+puz.puzzleName+" handling");
-		//fill in stuff in panel based on puzzle.
-		puzzleToRoom.FillInRooms();
-	}
-
 	public void FillInMentors(){
 		foreach (Mentor m in PuzzleManager.Instance.allMentors) {
 			GameObject g = (GameObject)Instantiate(mentorButtonPrefab);
@@ -119,13 +110,23 @@ public class InstructionManager : Singleton<InstructionManager> {
 		}
 	}
 
+	public void HandlePuzzleSelection(Button b){
+		Puzzle puz = b.GetComponent<Puzzle>();
+		selectedPuzzle = PuzzleManager.Instance.allPuzzles.Find(x=>x.puzzleName==puz.puzzleName);
+		AccessPanel(panels.FindIndex(x=>x.name=="Panel7PuzzleToRoom"));
+		print("Puzzle "+puz.puzzleName+" handling");
+		//fill in stuff in panel based on puzzle.
+		puzzleToRoom.FillInRooms();
+	}
+
+
 	public void FillInPuzzleChain(){
 		foreach (Puzzle p in PuzzleManager.Instance.gamePuzzles) {
 			GameObject g = (GameObject)Instantiate(puzzleButtonPrefab);
 			g.transform.SetParent(puzzleChainParent,false);
 			Text[] texts = g.GetComponentsInChildren<Text>();
 			texts[0].text = p.puzzleName.ToString();
-			texts[1].text = "";
+			texts[1].text = "in "+PuzzleManager.Instance.house.rooms.Find(x=>x.puzzles.Exists(y=>y==p)).type.ToString();
 			Puzzle pp = g.GetComponent<Puzzle> ();
 			pp.requirements = p.requirements;
 			pp.puzzleName = p.puzzleName;

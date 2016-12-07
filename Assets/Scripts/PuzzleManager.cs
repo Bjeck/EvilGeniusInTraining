@@ -21,8 +21,11 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	public PuzzleInstantiator puzzleInstantiator;
 	[SerializeField] RoomInstantiator roomInstantiator;
 	[SerializeField] MentorInstantiator mentorInstantiator;
+	public Doomsday_Device doomsday;
 
-	Puzzle curPuzzle;
+	public PuzzleCustoms puzzleCustomFunctions;
+
+	public Puzzle curPuzzle;
 	public bool isPuzzleRunning = false;
 	public bool runsOnLives = false;
 
@@ -33,6 +36,9 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	[SerializeField] Text livesCounter;
 
 	[SerializeField] GameObject hintPanel; [SerializeField] Text hintPanelText;
+	[SerializeField] GameObject introPanel;
+
+	public GameObject customPuzzleObject;
 
 	public float timer;
 	[SerializeField] Image timerMeter;
@@ -78,11 +84,13 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 
 
 	public void InitiateGame(){
-		
+		introPanel.SetActive (true);
 	}
 
 
 	public void BeginGame(){
+
+		doomsday.FillInClues ();
 
 		StartPuzzle (gamePuzzles [puzzleIterator]);
 
@@ -111,9 +119,17 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 				UpdateLivesText (0);
 				runsOnLives = true;
 			}
+			if (curPuzzle.onPlay != null) {
+				curPuzzle.onPlay (curPuzzle); //runs delegate function, if present.
+			}
 
 			isPuzzleRunning = true;
 		}
+	}
+
+	public void CheckSolution(string s){
+		solutionIPF.text = s;
+		CheckSolution ();
 	}
 
 	public void CheckSolution(){
@@ -153,6 +169,10 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 		curPuzzle = null;
 		timer = 0;
 		livesCounter.gameObject.SetActive (false);
+
+		customPuzzleObject.SetActive (false);
+		customPuzzleObject = null;
+
 		//timerUI.text = "";
 
 		//start next puzzle?
@@ -204,7 +224,7 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	public void DebugGameStart(){
 		gamePuzzles = allPuzzles;
 
-		//BeginGame ();
+		BeginGame ();
 	}
 
 	public void SetupTeams(){
