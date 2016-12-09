@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 enum Adjective {};
 enum Noun {};
@@ -12,6 +13,10 @@ public class Doomsday_Device : MonoBehaviour {
 	Noun noun;
 	Target target;
 
+	string doomsdayDevice = "bomb";
+
+	[SerializeField] InputField ipf;
+	[SerializeField] GameObject successVideoPanel;
 
 	string EvilMonologue;
 
@@ -51,6 +56,19 @@ public class Doomsday_Device : MonoBehaviour {
 
 		}
 
+	}
+
+
+	public void WhatIsDoomsdayDevice(){
+		
+	}
+
+
+	public void InputDoomsday(){
+		if(ipf.text == doomsdayDevice){
+			print("Yes. THat is the correct doomsday Device");
+			successVideoPanel.SetActive(true);
+		}
 	}
 
 

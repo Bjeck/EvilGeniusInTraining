@@ -50,7 +50,7 @@ public class PuzzleInstantiator : MonoBehaviour {
 		np.mentor = MentorID.None;
 		np.lives = 2;
 		np.solution = "window";
-		np.timeToComplete = 5;
+		np.timeToComplete = 60;
 		np.instruction = "Answer the question written on the window.";
 		np.successclue = "This will display another clue!";
 		np.failureclue = "This will display the failure clue! negative about the device.";

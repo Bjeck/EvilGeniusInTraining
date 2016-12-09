@@ -37,6 +37,8 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 
 	[SerializeField] GameObject hintPanel; [SerializeField] Text hintPanelText;
 	[SerializeField] GameObject introPanel;
+	[SerializeField] GameObject doomsdayPanel;
+
 
 	public GameObject customPuzzleObject;
 
@@ -103,6 +105,8 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 			StartPuzzle (gamePuzzles [puzzleIterator]);
 		} else {
 			print ("NO MORE PUZZLES!");
+			doomsdayPanel.SetActive(true);
+			doomsday.WhatIsDoomsdayDevice();
 		}
 	}
 
