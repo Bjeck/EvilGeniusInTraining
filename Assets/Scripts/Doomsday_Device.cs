@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-enum Adjective {};
-enum Noun {};
-enum Target {};
+enum Adjective {snake};
+enum Noun {Ray_Gun};
+enum Target {Paris};
 
 public class Doomsday_Device : MonoBehaviour {
 
@@ -13,26 +13,37 @@ public class Doomsday_Device : MonoBehaviour {
 	Noun noun;
 	Target target;
 
-	string doomsdayDevice = "bomb";
+	string doomsdayDevice = "ray gun";
 
 	[SerializeField] InputField ipf;
-	[SerializeField] GameObject successVideoPanel;
-
-	string EvilMonologue;
+	[SerializeField] GameObject successMonologuePanel;
+	[SerializeField] Text monologue;
 
 	List<string> successClues = new List<string>();
 	List<string> failureClues = new List<string>();
+
+	float finalTime = 12;
+	[SerializeField] Text finalTimer;
+	[SerializeField] Image finalMeter;
+	[SerializeField] GameObject explosionPanel;
+
+	[SerializeField] AudioSource explosion;
+	[SerializeField] AudioSource music;
 
 	void Start(){
 
 		InstantiateClues ();
 		//FillInClues ();
-
+		InitializeDevice ();
 	}
+
 
 	public void InitializeDevice(){
 
 		//Set properties
+
+
+		ConstructEvilMonologue ();
 
 	}
 
@@ -49,8 +60,7 @@ public class Doomsday_Device : MonoBehaviour {
 				p.successclue = successClues [r];
 				successClues.Remove (successClues[r]);
 
-				//int r = Random.Range (0, successClues.Count);		Are they tied? Should they be? Hm.
-				p.failureclue = failureClues [r];
+				p.failureclue = successClues [r]; // FOR NOW. THEY ARE THE SAME!
 				failureClues.Remove (failureClues[r]);
 			}
 
@@ -65,10 +75,19 @@ public class Doomsday_Device : MonoBehaviour {
 
 
 	public void InputDoomsday(){
-		if(ipf.text == doomsdayDevice){
+		if(ipf.text.ToLower().Contains(doomsdayDevice)){
 			print("Yes. THat is the correct doomsday Device");
-			successVideoPanel.SetActive(true);
+			successMonologuePanel.SetActive(true);
 		}
+	}
+
+
+	public void ConstructEvilMonologue(){
+
+		monologue.text = "Ahah! <i>[Taunt them]</i>. You have discovered the true power of this device! I will use this <i>" + ConvertSpaces(adjective.ToString()) + "-powered " + ConvertSpaces(noun.ToString()) + "</i> to _______ <i>" +ConvertSpaces(target.ToString()) +
+			"!</i> You thought <i>[embarrassing thing they did tonight]</i> would lead to your salvation, you thought <i>[silly thing they did tonight]</i> would help. But no, tonight, evil wins! And I, " +
+			PuzzleManager.Instance.teamEvil.teamName + ", will make it so! <i>[Evil laugh]</i>";
+
 	}
 
 
@@ -92,6 +111,52 @@ public class Doomsday_Device : MonoBehaviour {
 		failureClues.Add ("failure clue");
 		failureClues.Add ("failure clue");
 
+	}
+
+
+	public void StartFinalPuzzle(){
+
+		music.Play ();
+		StartCoroutine (puzzleTimer ());
+
+	}
+
+	IEnumerator puzzleTimer(){
+
+		while (finalTime > 0) {
+			finalTime -= Time.deltaTime;
+			finalTimer.text = finalTime.ToString("F2");
+
+			Vector3 sc = finalMeter.transform.localScale;
+			sc.x = -finalTime/121*3;
+			finalMeter.transform.localScale = sc;
+			yield return new WaitForEndOfFrame ();
+		}
+
+		//OH NO, TIME RAN OUT
+		LoseGame();
+
+		yield return new WaitForEndOfFrame ();
+
+	}
+
+
+	public void LoseGame(){
+		music.Stop ();
+
+		explosionPanel.SetActive (true);
+		explosion.Play ();
+
+	}
+
+
+
+
+
+
+	public string ConvertSpaces(string s){
+
+		return s.Replace ("_", " ");
 
 	}
 

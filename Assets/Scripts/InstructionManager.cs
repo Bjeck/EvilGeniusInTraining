@@ -35,6 +35,12 @@ public class InstructionManager : Singleton<InstructionManager> {
 	int panelsShown = 0;
 
 
+	public void SetEvilName(InputField ipf){
+		PuzzleManager.Instance.teamEvil.teamName = ipf.text;
+	
+	}
+
+
 	public void AssignRooms(){
 		List<Room> rooms = roomParent.GetComponentsInChildren<Room>().ToList();
 		List<Room> roomsInHouse = new List<Room>();

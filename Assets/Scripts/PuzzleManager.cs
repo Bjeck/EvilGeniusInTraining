@@ -164,7 +164,7 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 				outputText.text = curPuzzle.failureclue;
 			}
 			else {
-				outputText.text = "Only host gets to see this: "+curPuzzle.successclue;
+				outputText.text = "You failed. You receive no clue.";
 			}
 		}
 
