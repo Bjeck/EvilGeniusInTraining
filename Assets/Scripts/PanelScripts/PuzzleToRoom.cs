@@ -27,7 +27,7 @@ public class PuzzleToRoom : MonoBehaviour {
 
 			texts [1].text = "";
 			foreach(roomSpecs s in r.roomSpecifications){
-				texts[1].text += s.ToString()+", ";
+				texts[1].text += Utilities.ConvertSpaces(s.ToString())+", ";
 			}
 			//			texts[1] = REQUIREMENTS
 
@@ -38,7 +38,7 @@ public class PuzzleToRoom : MonoBehaviour {
 
 		puzzleText.text = InstructionManager.Instance.selectedPuzzle.puzzleName + "\n\nNeeds: ";
 		foreach (roomSpecs s in InstructionManager.Instance.selectedPuzzle.requirements) {
-			puzzleText.text += s.ToString () + ", ";
+			puzzleText.text += Utilities.ConvertSpaces(s.ToString ()) + ", ";
 		}
 
 		print (PuzzleManager.Instance.house.rooms[0]+" ROOM ");
@@ -81,7 +81,7 @@ public class PuzzleToRoom : MonoBehaviour {
 
 		string failedString = "";
 		foreach(roomSpecs s in failedreqs){
-			failedString += "- "+s.ToString()+"\n";
+			failedString += "- "+Utilities.ConvertSpaces(s.ToString())+"\n";
 		}
 
 		g.GetComponentInChildren<Text>().text = failedString;

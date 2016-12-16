@@ -23,6 +23,7 @@ public class InstructionManager : Singleton<InstructionManager> {
 	[SerializeField] Transform puzzleInstructionWindow;
 	[SerializeField] GameObject puzzleInstructionRecap;
 	[SerializeField] GameObject midPuzzleInstructionRecap;
+	[SerializeField] Button finishAddingPuzzlesButton;
 
 	//List of Panels (For recall, if user wants to edit something further.)
 	public List<GameObject> panels = new List<GameObject>();
@@ -96,7 +97,7 @@ public class InstructionManager : Singleton<InstructionManager> {
 			texts[0].text = p.puzzleName.ToString();
 			texts[1].text = "Requirements: ";
 			foreach(roomSpecs s in p.requirements){
-				texts[1].text += s.ToString();
+				texts[1].text += Utilities.ConvertSpaces(s.ToString());
 			}
 			Puzzle pp = g.GetComponent<Puzzle> ();
 			pp.requirements = p.requirements;
@@ -123,6 +124,8 @@ public class InstructionManager : Singleton<InstructionManager> {
 		print("Puzzle "+puz.puzzleName+" handling");
 		//fill in stuff in panel based on puzzle.
 		puzzleToRoom.FillInRooms();
+
+		finishAddingPuzzlesButton.interactable = true;
 	}
 
 
@@ -132,7 +135,7 @@ public class InstructionManager : Singleton<InstructionManager> {
 			g.transform.SetParent(puzzleChainParent,false);
 			Text[] texts = g.GetComponentsInChildren<Text>();
 			texts[0].text = p.puzzleName.ToString();
-			texts[1].text = "in "+PuzzleManager.Instance.house.rooms.Find(x=>x.puzzles.Exists(y=>y==p)).type.ToString();
+			texts[1].text = "in "+Utilities.ConvertSpaces(PuzzleManager.Instance.house.rooms.Find(x=>x.puzzles.Exists(y=>y==p)).type.ToString());
 			Puzzle pp = g.GetComponent<Puzzle> ();
 			pp.requirements = p.requirements;
 			pp.puzzleName = p.puzzleName;
@@ -188,6 +191,10 @@ public class InstructionManager : Singleton<InstructionManager> {
 
 	public void EndPuzzleInstruction(){
 		puzzleInstructionRecap.SetActive(true);
+	}
+
+	public void InitializeDoomsdayDevice(){
+		PuzzleManager.Instance.doomsday.InitializeDevice();
 	}
 
 

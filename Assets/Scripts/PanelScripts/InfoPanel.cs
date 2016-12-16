@@ -21,17 +21,19 @@ public class InfoPanel : MonoBehaviour {
 	public void UpdateText(){
 		s = "";
 		if (PuzzleManager.Instance.selectedMentor != null) {
-			s += "Mentor: " + PuzzleManager.Instance.selectedMentor.mentorName+"\n\n";
+			s += "Mentor:\n" + PuzzleManager.Instance.selectedMentor.mentorName+"\n\n";
 		}
 
-	    s += "Rooms:\n";
+		if(PuzzleManager.Instance.house.rooms.Count > 0){
+			s += "Rooms:\n";
+		}
 		foreach (Room r in PuzzleManager.Instance.house.rooms) {
-			s += r.type.ToString () + "\n";
+			s += "<b>" + r.type.ToString () + "</b>\n";
 			foreach (Puzzle p in r.puzzles) {
 				s += " - " + p.puzzleName+"\n";
 			}
 			foreach (roomSpecs rs in r.roomSpecifications) {
-				s += "     /has " + rs.ToString()+"\n";
+				s += "(has " +  Utilities.ConvertSpaces(rs.ToString())+")\n";
 			}
 
 		}

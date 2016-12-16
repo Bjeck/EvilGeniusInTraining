@@ -22,13 +22,15 @@ public class Doomsday_Device : MonoBehaviour {
 	List<string> successClues = new List<string>();
 	List<string> failureClues = new List<string>();
 
-	float finalTime = 12;
+	float finalTime = 60;
 	[SerializeField] Text finalTimer;
 	[SerializeField] Image finalMeter;
 	[SerializeField] GameObject explosionPanel;
 
 	[SerializeField] AudioSource explosion;
 	[SerializeField] AudioSource music;
+
+	[SerializeField] Text needyText;
 
 	void Start(){
 
@@ -45,6 +47,10 @@ public class Doomsday_Device : MonoBehaviour {
 
 		ConstructEvilMonologue ();
 
+
+		//set the needy text (if applicable)
+		needyText.text = "SNAKES AWAKE!";
+
 	}
 
 	public void FillInClues(){
@@ -57,11 +63,14 @@ public class Doomsday_Device : MonoBehaviour {
 			for (int i = 0; i < cluePrPuzzle; i++) {
 				print ("filling in "+i);
 				int r = Random.Range (0, successClues.Count);
-				p.successclue = successClues [r];
-				successClues.Remove (successClues[r]);
+				p.successclue = successClues [0];
 
-				p.failureclue = successClues [r]; // FOR NOW. THEY ARE THE SAME!
-				failureClues.Remove (failureClues[r]);
+
+				p.failureclue = successClues [0]; // FOR NOW. THEY ARE THE SAME!
+
+				//successClues.Remove (successClues[r]);
+
+			//	failureClues.Remove (failureClues[r]);
 			}
 
 		}
@@ -83,11 +92,9 @@ public class Doomsday_Device : MonoBehaviour {
 
 
 	public void ConstructEvilMonologue(){
-
 		monologue.text = "Ahah! <i>[Taunt them]</i>. You have discovered the true power of this device! I will use this <i>" + ConvertSpaces(adjective.ToString()) + "-powered " + ConvertSpaces(noun.ToString()) + "</i> to _______ <i>" +ConvertSpaces(target.ToString()) +
-			"!</i> You thought <i>[embarrassing thing they did tonight]</i> would lead to your salvation, you thought <i>[silly thing they did tonight]</i> would help. But no, tonight, evil wins! And I, " +
+			"!</i> You thought <i>[embarrassing thing they did tonight]</i> would help, you thought <i>[silly thing they did tonight]</i> would lead to your salvation. But no, tonight, evil wins! And I, " +
 			PuzzleManager.Instance.teamEvil.teamName + ", will make it so! <i>[Evil laugh]</i>";
-
 	}
 
 
@@ -95,21 +102,21 @@ public class Doomsday_Device : MonoBehaviour {
 
 	void InstantiateClues(){
 
-		successClues.Add("Our intelligence reports that our rival agency has developed technology that harnesses the lining potential in a thundercloud and weaponises it as an electromagnetic pulse. In testing it was confirmed to not be effective in turning things into stone.");
+		//successClues.Add("Our intelligence reports that our rival agency has developed technology that harnesses the lining potential in a thundercloud and weaponises it as an electromagnetic pulse. In testing it was confirmed to not be effective in turning things into stone.");
 		successClues.Add ("Due to not having the precision afforded by a laser, the weather control ray gun is only effective on large a geographical target.");
-		successClues.Add ("Experiments in time travel technology have to date never left their subjects alive. Lasers although useful have been shown to have no application in causing time travel.");
-		successClues.Add ("The mind controlling acid can only be effectively used on human targets and will not be deployed by a bomb or by drones.");
-		successClues.Add ("The rare snake venom, that has the ability to petrify things, needs the snakes to still be alive when activated.");
-		successClues.Add ("It takes an atomic energy source to have enough power to control the weaponised thundercloud. This is not the device designed to shrink the polar ice caps.");
-		successClues.Add ("the moon will be destroyed by nano-technology, but they will not do so by shrinking it. As with all modern monarchies, the queen has been bred to be impervious to all forms of robot assault.");
+		//successClues.Add ("Experiments in time travel technology have to date never left their subjects alive. Lasers although useful have been shown to have no application in causing time travel.");
+		//successClues.Add ("The mind controlling acid can only be effectively used on human targets and will not be deployed by a bomb or by drones.");
+		//successClues.Add ("The rare snake venom, that has the ability to petrify things, needs the snakes to still be alive when activated.");
+		//successClues.Add ("It takes an atomic energy source to have enough power to control the weaponised thundercloud. This is not the device designed to shrink the polar ice caps.");
+		//successClues.Add ("the moon will be destroyed by nano-technology, but they will not do so by shrinking it. As with all modern monarchies, the queen has been bred to be impervious to all forms of robot assault.");
 
-		failureClues.Add ("failure clue");
-		failureClues.Add ("failure clue");
-		failureClues.Add ("failure clue");
-		failureClues.Add ("failure clue");
-		failureClues.Add ("failure clue");
-		failureClues.Add ("failure clue");
-		failureClues.Add ("failure clue");
+		//failureClues.Add ("failure clue");
+		//failureClues.Add ("failure clue");
+		//failureClues.Add ("failure clue");
+		//failureClues.Add ("failure clue");
+		//failureClues.Add ("failure clue");
+		//failureClues.Add ("failure clue");
+		//failureClues.Add ("failure clue");
 
 	}
 
@@ -122,6 +129,8 @@ public class Doomsday_Device : MonoBehaviour {
 	}
 
 	IEnumerator puzzleTimer(){
+		float tentimer = 10;
+		needyText.gameObject.SetActive(false);
 
 		while (finalTime > 0) {
 			finalTime -= Time.deltaTime;
@@ -130,6 +139,13 @@ public class Doomsday_Device : MonoBehaviour {
 			Vector3 sc = finalMeter.transform.localScale;
 			sc.x = -finalTime/121*3;
 			finalMeter.transform.localScale = sc;
+
+			tentimer -= Time.deltaTime;
+			if(tentimer < 0){
+				ShowNeedy();
+				tentimer = 10;
+			}
+
 			yield return new WaitForEndOfFrame ();
 		}
 
@@ -140,6 +156,18 @@ public class Doomsday_Device : MonoBehaviour {
 
 	}
 
+	public void ShowNeedy(){
+		needyText.gameObject.SetActive(true);
+	}
+
+	public void HideNeedy(){
+		needyText.gameObject.SetActive(false);
+
+	}
+
+	public void Mistake(){
+		finalTime -= 10f;
+	}
 
 	public void LoseGame(){
 		music.Stop ();
@@ -147,6 +175,9 @@ public class Doomsday_Device : MonoBehaviour {
 		explosionPanel.SetActive (true);
 		explosion.Play ();
 
+	}
+	public void WinGame(){
+		music.Stop ();
 	}
 
 

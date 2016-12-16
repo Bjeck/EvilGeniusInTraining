@@ -75,6 +75,10 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 				ExecuteSolution();
 			}
 		}
+
+		if(Input.GetKey(KeyCode.Escape)){
+			Application.Quit();
+		}
 	}
 
 	void SetTimerMeter(){
@@ -196,7 +200,9 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	public void AgentHelp(){
 		if (teamAgent.tokens > 0) {
 			DisplayHint (curPuzzle.agenthelp);
-			curPuzzle.onHelpAgent (curPuzzle);
+			if(curPuzzle.onHelpAgent != null){
+				curPuzzle.onHelpAgent (curPuzzle);
+			}
 			teamAgent.tokens -= 1;
 		}
 	}
@@ -204,7 +210,9 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 	public void EvilHelp(){
 		if (teamEvil.tokens > 0) {
 			DisplayHint (curPuzzle.evilhelp);
-			curPuzzle.onHelpEvil (curPuzzle);
+			if(curPuzzle.onHelpEvil != null){
+				curPuzzle.onHelpEvil (curPuzzle);
+			}
 			teamEvil.tokens -= 1;
 		}
 	}
