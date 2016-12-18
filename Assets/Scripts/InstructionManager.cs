@@ -151,6 +151,7 @@ public class InstructionManager : Singleton<InstructionManager> {
 	public void NextPuzzleInstruction(){
 		midPuzzleInstructionRecap.SetActive (false);
 		panelsShown = 0;
+		print(puzzlesInstructed+" "+panelsShown);
 		PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels[panelsShown].transform.parent.SetParent(puzzleInstructionWindow);
 		foreach(PuzzleInstructionPanel p in PuzzleManager.Instance.gamePuzzles[puzzlesInstructed].instructionPanels){
 			p.gameObject.SetActive(false);

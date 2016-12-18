@@ -118,6 +118,8 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 		if (gamePuzzles.Exists (x => x == p) && !p.hasRun) {
 			curPuzzle = p;
 			curPuzzleText.text = curPuzzle.instruction;
+			outputText.text = "";
+			solutionIPF.text = "";
 			timer = p.timeToComplete;
 			timerParent.SetActive(true);
 			timerUI.color = Color.white;
@@ -178,7 +180,11 @@ public class PuzzleManager : Singleton<PuzzleManager> {
 		timer = 0;
 		livesCounter.gameObject.SetActive (false);
 
-		customPuzzleObject.SetActive (false);
+		if(customPuzzleObject != null){
+			customPuzzleObject.SetActive (false);
+		}
+
+
 		customPuzzleObject = null;
 
 		//timerUI.text = "";

@@ -22,7 +22,7 @@ public class Doomsday_Device : MonoBehaviour {
 	List<string> successClues = new List<string>();
 	List<string> failureClues = new List<string>();
 
-	float finalTime = 60;
+	float finalTime = 165;
 	[SerializeField] Text finalTimer;
 	[SerializeField] Image finalMeter;
 	[SerializeField] GameObject explosionPanel;
@@ -56,19 +56,19 @@ public class Doomsday_Device : MonoBehaviour {
 	public void FillInClues(){
 		print ("filling in clues");
 		int nrOfPuzzles = PuzzleManager.Instance.gamePuzzles.Count;
-		int cluePrPuzzle = successClues.Count / nrOfPuzzles;
+		//int cluePrPuzzle = successClues.Count / nrOfPuzzles;
+		int cluePrPuzzle = 1;
 
 		foreach (Puzzle p in PuzzleManager.Instance.gamePuzzles) {
 			print ("filling in "+p.puzzleName+" "+cluePrPuzzle);
 			for (int i = 0; i < cluePrPuzzle; i++) {
 				print ("filling in "+i);
 				int r = Random.Range (0, successClues.Count);
-				p.successclue = successClues [0];
+				p.successclue = successClues [r];
 
+				p.failureclue = successClues [r]; // FOR NOW. THEY ARE THE SAME!
 
-				p.failureclue = successClues [0]; // FOR NOW. THEY ARE THE SAME!
-
-				//successClues.Remove (successClues[r]);
+				successClues.Remove (successClues[r]);
 
 			//	failureClues.Remove (failureClues[r]);
 			}
@@ -104,7 +104,7 @@ public class Doomsday_Device : MonoBehaviour {
 
 		//successClues.Add("Our intelligence reports that our rival agency has developed technology that harnesses the lining potential in a thundercloud and weaponises it as an electromagnetic pulse. In testing it was confirmed to not be effective in turning things into stone.");
 		successClues.Add ("Due to not having the precision afforded by a laser, the weather control ray gun is only effective on large a geographical target.");
-		//successClues.Add ("Experiments in time travel technology have to date never left their subjects alive. Lasers although useful have been shown to have no application in causing time travel.");
+		successClues.Add ("Experiments in time travel technology have to date never left their subjects alive. Lasers although useful have been shown to have no application in causing time travel.");
 		//successClues.Add ("The mind controlling acid can only be effectively used on human targets and will not be deployed by a bomb or by drones.");
 		//successClues.Add ("The rare snake venom, that has the ability to petrify things, needs the snakes to still be alive when activated.");
 		//successClues.Add ("It takes an atomic energy source to have enough power to control the weaponised thundercloud. This is not the device designed to shrink the polar ice caps.");
@@ -137,7 +137,7 @@ public class Doomsday_Device : MonoBehaviour {
 			finalTimer.text = finalTime.ToString("F2");
 
 			Vector3 sc = finalMeter.transform.localScale;
-			sc.x = -finalTime/121*3;
+			sc.x = -finalTime/165*3;
 			finalMeter.transform.localScale = sc;
 
 			tentimer -= Time.deltaTime;
